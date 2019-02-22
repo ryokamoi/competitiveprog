@@ -1,82 +1,72 @@
 #include<iostream>
-#include<vector>
-#include<math.h>
+#include<map>
+#include<tuple>
 
 using namespace std;
 
 #define REP(i, n) for(int i=0; i<n; i++)
 
+typedef pair<int, int> pii;
+
 int p, q, a, n;
-vector<vector<int> > dp[8][12001];
-int s;
-vector<int> d;
+map<tuple<int, int, int, int, int>, int> memo;
+
+int gcd(int a, int b) {
+    if (a==0) return b;
+    if (a>b) return gcd(b, a);
+
+    return gcd(b%a, a);
+}
+
+int lcm(int a, int b) {
+    return a*b / gcd(a, b);
+}
+
+pii subt(int n1, int d1, int n2, int d2) {
+    int l = lcm(d1, d2);
+    n1 *= l / d1;
+    n2 *= l / d2;
+    int s = n1-n2;
+
+    if (s < 0) {
+        return pii(s, l);
+    } else {
+        int g = gcd(s, l);
+        return pii(s/g, l/g);
+    }
+}
+
+int dfs(int nume, int deno, int prev, int mul, int n) {
+    if (n<=0) return 0;
+    
+    auto itr = memo.find(make_tuple(nume, deno, prev, mul, n));
+    if (itr != memo.end()) return memo[make_tuple(nume, deno, prev, mul, n)];
+
+    int output = 0;
+    for (int i=prev; i<=a/mul; i++) {
+        pii ans = subt(nume, deno, 1, i);
+        if (ans.first < 0) continue;
+        if (ans.first == 0) {
+            output += 1;
+            continue;
+        }
+
+        pii exp = subt(nume, deno, n, i);
+        if (exp.first > 0) break;
+        if (ans.second / ans.first * i * mul > a) continue;
+        
+        output += dfs(ans.first, ans.second, i, mul*i, n-1);
+    }
+    return memo[make_tuple(nume, deno, prev, mul, n)] = output;
+}
 
 int main(){
     while(1){
+        memo = map<tuple<int, int, int, int, int>, int>();
+        
         cin >> p >> q >> a >> n;
         if(p==0) break;
 
-        int s = p * ceil((double)a / q);
-        int c = s * q / p;
-
-        cout << s << endl;
-
-        d.clear();
-        REP(i, c/2+1){
-            if(i>=1 && c%i==0) d.push_back(i);
-        }
-        d.push_back(c);
-
-        /*
-        REP(i, d.size()){
-            cout << d[i] << " ";
-        }
-        cout << endl;
-        */
-
-        REP(i, n) REP(j, s+1) dp[i][j].clear();
-        REP(i, d.size()){
-            vector<int> init;
-            init.push_back(d[i]);
-            dp[1][d[i]].push_back(init);
-        }
-
-        for(int i=2; i<=n; i++){
-            REP(j, s+1){
-                REP(k, d.size()){
-                    if(j-d[k]>0){
-                        REP(l, dp[i-1][j-d[k]].size()){
-                            if(dp[i-1][j-d[k]][l].back()<=d[k]){
-                                vector<int> nd = dp[i-1][j-d[k]][l];
-                                nd.push_back(d[k]);
-                                dp[i][j].push_back(nd);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        /*
-        REP(i, dp[n][s].size()){
-            REP(j, dp[n][s][i].size()){
-                cout << dp[n][s][i][j] << " ";
-            }
-            cout << endl;
-        }
-        */
-
-        int count = 0;
-        REP(i, n+1){
-            REP(j, dp[i][s].size()){
-                int pro = 1;
-                REP(k, dp[i][s][j].size()){
-                    pro *= c/dp[i][s][j][k];
-                }
-                if(pro<=a) count += 1;
-            }
-        }
-
-        cout << count << endl;
+        cout << dfs(p, q, 1, 1, n) << endl;
     }
 }
