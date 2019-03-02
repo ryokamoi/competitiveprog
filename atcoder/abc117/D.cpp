@@ -9,6 +9,8 @@ typedef unsigned long long ll;
 
 ll n, k;
 ll a[100010];
+ll output[41];
+int maxidx=41;
 
 ll llpow2(ll a) {
     if (a==0) return 1;
@@ -20,7 +22,7 @@ ll llpow2(ll a) {
     }
 }
 
-bool bestisone(ll idx, ll *a) {
+bool chooseone(ll idx, ll *a) {
     int output = 0;
     REP(i, n) {
         if(a[i] & (1ll<<idx)) output ++;
@@ -44,35 +46,20 @@ int main(){
         cin >> a[i];
     }
 
-    int maxidx=0;
-    REP(i, 50) {
-        bool flag = true;
-        if (k >= llpow2(i)) flag=false;
-        REP(j, n) {
-            if(a[j] >= llpow2(i)) flag = false;
-        }
-
-        if (flag) {
-            maxidx = i-1;
-            break;
-        }
-    }
-
-    string output = "";
     bool small = false;
     for (int i=maxidx; i>=0; i--) {
-        bool abit = bestisone(i, a);
-        if ((bool)(k & (1ll<<i))==abit || small) {
-            output += to_string(bitsum(i, a, abit));
+        bool abit = chooseone(i, a);
+        if ((bool)(k & (1ll<<i)) == abit || small) {
+            output[i]= bitsum(i, a, abit);
         } else {
-            if (!abit) small = true;
-            output += to_string(bitsum(i, a, 0));
+            if (!abit) small = true; // choose zero
+            output[i] = bitsum(i, a, 0);
         }
     }
 
     ll numoutput = 0;
-    for (int i=output.size()-1; i>=0; i--) {
-        numoutput += (output[output.size()-i-1]-'0') * llpow2(i);
+    for (int i=maxidx; i>=0; i--) {
+        numoutput += output[i] * llpow2(i);
     }
     cout << numoutput << endl;
 }
