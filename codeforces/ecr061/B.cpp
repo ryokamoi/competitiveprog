@@ -1,5 +1,4 @@
 // Ryo Kamoi
-#define DEBUG
 
 #include<iostream>
 #include<math.h>
@@ -19,27 +18,27 @@ typedef pair<ll, ll> pll;
 
 int INF = 1000000000;
 
-map<int, int> b;
-map<int, int> req;
-
-int n, k, m, s;
-
-int a[500010];
-
+ll n;
+vector<ll> a;
+ll m;
+ll q[1000000];
 int main(){
-    cin >> n >> k >> m >> s;
+    ll sum = 0;
+
+    cin >> n;
+    REP(i, n) {
+        int ai;
+        cin >> ai;
+        sum += ai;
+        a.push_back(ai);
+    }
+
+    sort(a.begin(), a.end(), greater<ll>());
+
+    cin >> m;
     REP(i, m) {
-        cin >> a[i];
+        ll qi;
+        cin >> qi;
+        cout << sum - a[qi-1] << endl;
     }
-
-    REP(i, s) {
-        int bi;
-        cin >> bi;
-        if (b.find(bi) != b.end()) {
-            b[bi]++;
-        } else {
-            b[bi] = 1;
-        }
-    }
-
 }
