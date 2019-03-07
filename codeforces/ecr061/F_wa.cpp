@@ -36,6 +36,7 @@ int search(int left, int right) {
         }
     }
 
+    // uniform
     if (flag) {
         return dp[left][right] = 1;
     }
