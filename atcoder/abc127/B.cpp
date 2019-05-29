@@ -21,6 +21,11 @@ typedef pair<double, double> pdd;
 
 int INF = 1000000000;
 
+int r, d, x;
 int main(){
-
+  cin >> r >> d >> x;
+  REP(i, 10) {
+    x = r*x - d;
+    cout << x << endl;
+  }
 }

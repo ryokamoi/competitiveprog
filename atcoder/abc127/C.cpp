@@ -21,6 +21,18 @@ typedef pair<double, double> pdd;
 
 int INF = 1000000000;
 
+int n, m;
+int low, up;
 int main(){
+  cin >> n >> m;
+  low = -1; up = INF;
 
+  REP(i, m) {
+    int l, r;
+    cin >> l >> r;
+    low = max(low, l);
+    up = min(up, r);
+  }
+
+  cout << max(0, up-low+1) << endl;
 }
