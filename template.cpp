@@ -1,4 +1,5 @@
 // Ryo Kamoi
+#define DEBUG
 
 #include<iostream>
 #include<math.h>
